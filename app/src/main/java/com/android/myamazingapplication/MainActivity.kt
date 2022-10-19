@@ -8,10 +8,14 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.android.myamazingapplication.ui.theme.MyAmazingApplicationTheme
 import com.android.myamazingapplication.view.HelloViewModel
+import com.android.myamazingapplication.view.HelloViewModelState
 import org.koin.androidx.compose.getViewModel
 
 class MainActivity : ComponentActivity() {
@@ -34,8 +38,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(name: String) {
     val viewModel = getViewModel<HelloViewModel>()
-    val hello = viewModel.sayHello()
-    Text(text = "Hello $name! and $hello")
+    val state by remember(viewModel) {
+        viewModel.sayHelloByFlow()
+    }.collectAsState(initial = HelloViewModelState())
+
+    Text(text = "Hello $name! and  ${state.isLoading} and ${state.doc}")
+
 }
 
 @Preview(showBackground = true)
